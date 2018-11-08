@@ -1,0 +1,9 @@
+/Webserver/.metadata/*
+/Webserver/.project
+
+/Webserver/RESTfulWebserver/target/*
+/Webserver/RESTfulWebserver/.classpath
+/Webserver/RESTfulWebserver/.project
+/Webserver/RESTfulWebserver/.settings/*
+/Webserver/RESTfulWebserver/.metadata/*
+/Webserver/RESTfulWebserver/build/*
