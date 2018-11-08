@@ -7,3 +7,5 @@
 /Webserver/RESTfulWebserver/.settings/*
 /Webserver/RESTfulWebserver/.metadata/*
 /Webserver/RESTfulWebserver/build/*
+
+/AndroidApllication/.idea/*
