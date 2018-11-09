@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jwt.service.mail.Mailer;
+
 //import com.jwt.service.mail.Mailer;
 
 
@@ -28,6 +30,11 @@ public class Services {
 	
 	@Context	
 	private ServletContext context;
+	private Mailer mailer;
+	
+	public Services() {
+		mailer = new Mailer(context);
+	}
 	
 	/**
 	 * Gives greetings to an Request. Testable with
@@ -115,12 +122,15 @@ public class Services {
 				// TODO: addUserToDB
 				
 				//send registration mail 
-				//Mailer mailer = new Mailer(context);
-				//boolean messageSent = mailer.sendRegistrationMail(email, username);
+				boolean messageSent = mailer.sendRegistrationMail(email, username);
 		
 				// TODO: response for client
 				JSONObject response = new JSONObject();
-				
+		
+				if(!messageSent) {
+					response.put("userRegistration", "wrongMail");
+					return Response.status(400).entity(response.toString()).build();
+				}
 				response.put("userRegistration", "successfullRegistration");
 
 				return Response.status(200).entity(response.toString()).build();
@@ -183,9 +193,8 @@ public class Services {
 		JSONObject output = new JSONObject("{Test: send Mail}");
 		System.out.println("...sendTestMail Request " );
 		
-		//Mailer mailer = new Mailer(context);
 		//send test registration mail 
-		//mailer.sendRegistrationMail("anika.apel@gmx.de", "test");
+		mailer.sendRegistrationMail("anika.apel@gmx.de", "test");
 		
 		return Response.status(200).entity(output.toString()).build();
 	}
