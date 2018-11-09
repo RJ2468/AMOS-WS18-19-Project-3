@@ -1,7 +1,9 @@
 package com.gr03.amos.bikerapp;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -47,6 +50,8 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void userSignUp(View view) throws JSONException{
+        this.setMessageOnScreen("");
+
         //TODO check all values are valid
 
         EditText password = findViewById(R.id.password);
@@ -62,6 +67,12 @@ public class SignUpActivity extends AppCompatActivity {
 
         EditText name = findViewById(R.id.name);
         EditText email = findViewById(R.id.email);
+
+        if(!isValidEmail(email.getText().toString())){
+            Log.i("VALIDATIONMAIL", "invalid email address " + email.getText().toString());
+            this.setMessageOnScreen("Your email address is not valid", Color.RED);
+            return;
+        }
 
         Boolean businessUser = false;
         if (businessName.VISIBLE == 0) businessUser = true;
@@ -85,8 +96,59 @@ public class SignUpActivity extends AppCompatActivity {
             new Thread(task).start();
             Log.i("Response", task.get());
             response = new JSONObject(task.get());
+
+            //handle response
+            if(response.has("userRegistration")){
+                String statusReg = (String) response.get("userRegistration");
+                if(statusReg.equals("wrongMail")){
+                    Log.i("VALIDATIONMAILSERVER", "invalid email address " + email.getText().toString());
+                    this.setMessageOnScreen("Your email address is not valid", Color.RED);
+                    return;
+                }
+
+                if(statusReg.equals("successful")){
+                    this.setMessageOnScreen("You have successfully registered! You can login now.", Color.GREEN);
+                }
+
+                if(statusReg.equals("mailExists")){
+                    Log.i("mailExists", "email address already exists");
+                    this.setMessageOnScreen("A user with this email address is already registered. Try to login.", Color.RED);
+                }
+            }
         } catch (Exception e) {
             Log.i("Exception --- not requested", e.toString());
+        }
+    }
+
+    /**
+     * Sets a message on the screen in the text field "message"
+     *
+     * @param message Message to show the user
+     */
+    public void setMessageOnScreen(String message){
+        TextView textError = (TextView) findViewById(R.id.message);
+
+        textError.setText(message);
+    }
+
+    /**
+     * Sets a message on the screen in a specific color in the text field "message"
+     *
+     * @param message Message to show the user
+     * @param color Color of the text
+     */
+    public void setMessageOnScreen(String message, int color){
+        setMessageOnScreen(message);
+        TextView textError = (TextView) findViewById(R.id.message);
+        textError.setTextColor(color);
+
+    }
+
+    public static boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
         }
     }
 }
