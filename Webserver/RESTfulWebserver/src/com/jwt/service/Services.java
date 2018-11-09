@@ -109,11 +109,22 @@ public class Services {
 		if (JSONreq.has("name") && JSONreq.has("password") && JSONreq.has("email")) {
 			try {
 				// TODO: check if email already exists
+				boolean mailExists = false;
+				String email = JSONreq.getString("email");
 
+				//TODO add database statement
+
+				//SELECT * FROM user WHERE email = <email> 
+				
+				JSONObject response = new JSONObject();
+				if(mailExists) {
+					response.put("userRegistration", "mailExists");
+					return Response.status(400).entity(response.toString()).build();
+				}
+				
 				// get data
 				String username = JSONreq.getString("name");
 				String password = JSONreq.getString("password");
-				String email = JSONreq.getString("email");
 				// TODO: more data... city, birth?
 
 				System.out.println("...userRegistrationRequest from " + username);
@@ -125,7 +136,6 @@ public class Services {
 				boolean messageSent = mailer.sendRegistrationMail(email, username);
 		
 				// TODO: response for client
-				JSONObject response = new JSONObject();
 		
 				if(!messageSent) {
 					response.put("userRegistration", "wrongMail");
