@@ -190,7 +190,38 @@ public class Services {
 		
 		return Response.status(200).entity(output.toString()).build();
 	}
-
+	
+	/**
+	 * TODO
+	 * @param urlReq
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws JSONException
+	 * @throws UnsupportedEncodingException
+	 */
+	@POST
+	@Path("/createRoute")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response createRoute(String urlReq)
+			throws ClassNotFoundException, SQLException, JSONException, UnsupportedEncodingException {
+		JSONObject JSONreq = new JSONObject(urlReq);
+		System.out.println("...createRoute");
+		try {		
+			int user_id = JSONreq.getInt("user_id"); 
+			String routeName = JSONreq.getString("name");
+			String routeDescription = JSONreq.getString("description");
+			int startPoint = JSONreq.getInt("start_point");
+			int endPoint = JSONreq.getInt("end_point");
+			JSONObject response = new JSONObject();
+			
+			response.put("eventCreation", "successfullCreation");
+			return Response.status(200).entity(response.toString()).build();
+		} catch (Exception ex) {
+		    System.out.println("InvalidRequestbody");
+		    return Response.status(400).entity("InvalidRequestBody").build();
+		}
+	}
 }
 
 
