@@ -52,16 +52,17 @@ public class SignUpActivity extends AppCompatActivity {
     public void userSignUp(View view) throws JSONException{
         this.setMessageOnScreen("");
 
-        //TODO check all values are valid
-
         EditText password = findViewById(R.id.password);
         EditText confirm_pw = findViewById(R.id.confirm_password);
 
         String pw = password.getText().toString();
 
         if (!pw.equals(confirm_pw.getText().toString())) {
-            //TODO inform user & clear values
-            Log.i("COMPAREPASSWORDS", "FAILED........................");
+            Log.i("COMPAREPASSWORDS", "passwords are unequal");
+           // this.setMessageOnScreen( "The passwords you entered do not match. Please try it again.",Color.RED);
+            Toast.makeText(getApplicationContext(), "The passwords you entered do not match. Please try it again.", Toast.LENGTH_LONG).show();
+            password.setText("");
+            confirm_pw.setText("");
             return;
         }
 
