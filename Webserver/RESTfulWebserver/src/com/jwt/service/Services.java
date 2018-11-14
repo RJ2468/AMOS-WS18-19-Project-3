@@ -1,6 +1,7 @@
 package com.jwt.service;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
@@ -18,17 +19,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jwt.service.mail.Mailer;
-
+import db.psql.connection.User;
 
 /**
  * This class provides all web services.
  */
 @Path("/services")
 public class Services {
-	
-	@Context	
+
+	@Context
 	private ServletContext context;
-	
+
 	/**
 	 * Gives greetings to an Request. Testable with
 	 * http://localhost:8080/RESTfulWebserver/services/Tester
@@ -46,8 +47,8 @@ public class Services {
 		return Response.status(200).entity(output.toString()).build();
 	}
 
-	/**TODO
-	 * Checks users authentication.
+	/**
+	 * TODO Checks users authentication.
 	 * 
 	 * @param urlReq
 	 *            with user name and password
@@ -66,11 +67,11 @@ public class Services {
 		JSONObject JSONreq = new JSONObject(urlReq);
 
 		if (JSONreq.has("username") && JSONreq.has("password")) {
-			String username = JSONreq.getString("username"); //or email
+			String username = JSONreq.getString("username"); // or email
 			String password = JSONreq.getString("password");
 
 			// check users info in DB
-			
+
 			// TODO: response for client
 			JSONObject response = new JSONObject();
 
@@ -80,8 +81,8 @@ public class Services {
 		}
 	}
 
-	/**TODO
-	 * Adds new user to database.
+	/**
+	 * TODO Adds new user to database.
 	 * 
 	 * @param urlReq
 	 *            with user name, password, email, ...
@@ -110,19 +111,35 @@ public class Services {
 				// TODO: more data... city, birth?
 
 				System.out.println("...userRegistrationRequest from " + username);
-
-
-				// TODO: addUserToDB
 				
-				//send registration mail 
-				Mailer mailer = new Mailer(context);
-				boolean messageSent = mailer.sendRegistrationMail(email, username);
-		
-				// TODO: response for client
 				JSONObject response = new JSONObject();
-				
-				response.put("userRegistration", "successfullRegistration");
 
+				/* class PostgreSQLExample needed----
+				try {
+					PostgreSQLExample postgreSQLExample = new PostgreSQLExample();
+					Connection conn = postgreSQLExample.getPostgreSQLConnection();
+
+					PreparedStatement st = conn.prepareStatement(
+							"INSERT INTO USER (id_user, email, password, id_user_type, user_type) VALUES (?, ?, ?, ?, ?)");
+					st.setInt(1, 1);
+					st.setString(2, email);
+					st.setString(3, password);
+					st.setInt(4, 1);
+					st.setInt(5, 1);
+
+					st.executeUpdate();
+					st.closeOnCompletion();
+				
+					response.put("userRegistration", "successfullRegistration");
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					response.put("userRegistration", "failedRegistration");
+				}
+				*/
+				
+				//delete after writing into db works
+				response.put("userRegistration", "successfullRegistration");
+				
 				return Response.status(200).entity(response.toString()).build();
 
 			} catch (Exception e) {
@@ -132,7 +149,20 @@ public class Services {
 		System.out.println("InvalidRequestbody");
 		return Response.status(400).entity("InvalidRequestBody").build();
 	}
-	
+
+	// TODO: response for client
+	JSONObject response = new JSONObject();
+
+	response.put("userRegistration","successfullRegistration");
+
+	return Response.status(200).entity(response.toString()).build();
+
+	}catch(Exception e)
+	{
+				System.out.println("Wrong JSONFormat:" + e.toString());
+			}
+	}System.out.println("InvalidRequestbody");return Response.status(400).entity("InvalidRequestBody").build();}
+
 	/**
 	 * TODO
 	 * @param urlReq
@@ -166,7 +196,7 @@ public class Services {
 		System.out.println("InvalidRequestbody");
 		return Response.status(400).entity("InvalidRequestBody").build();
 	}
-	
+
 	/**
 	 * Sets options for headers.
 	 */
@@ -176,21 +206,17 @@ public class Services {
 				.header("Access-Control-Allow-Origin", "*").build();
 	}
 
-
-	@GET
-	@Path("/testMail")
-	public Response sendTestMail() throws JSONException {
-		JSONObject output = new JSONObject("{Test: send Mail}");
-		System.out.println("...sendTestMail Request " );
-		
-		Mailer mailer = new Mailer(context);
-		//send test registration mail 
-		
-		//mailer.sendRegistrationMail("anika.apel@gmx.de", "test");
-		
-		return Response.status(200).entity(output.toString()).build();
-	}
-
+	/*
+	 * @GET
+	 * 
+	 * @Path("/testMail") public Response sendTestMail() throws JSONException {
+	 * JSONObject output = new JSONObject("{Test: send Mail}");
+	 * System.out.println("...sendTestMail Request " );
+	 * 
+	 * Mailer mailer = new Mailer(context); //send test registration mail
+	 * 
+	 * //mailer.sendRegistrationMail("anika.apel@gmx.de", "test");
+	 * 
+	 * return Response.status(200).entity(output.toString()).build(); }
+	 */
 }
-
-

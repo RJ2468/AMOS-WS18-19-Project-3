@@ -1,0 +1,5 @@
+package db.psql.connection;
+
+public class User {
+
+}

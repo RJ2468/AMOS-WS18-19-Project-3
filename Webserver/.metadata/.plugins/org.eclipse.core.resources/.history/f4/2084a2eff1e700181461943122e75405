@@ -1,0 +1,66 @@
+package db.psql.connection;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class User {
+	
+	static String psqlUser = "server_Adrenaline";
+	static String psqlPassword = "pw";
+
+	public static int writeIntoDBgetID(Integer ref_FF_Gew_ID, String ansprechpartner_int, String datum, String erfasser,
+			String bestellnummer, String psp, String av_ve, String av_ff, String von, String bis, Boolean besetzt,
+			String arbeiten, String ort, String bemerkungen, String kurztitel, String kontraktnummer, String begeher)
+			throws SQLException, ClassNotFoundException, InterruptedException, ParseException {
+
+		String url = "jdbc:postgresql://TIMEBURNER-PC;databaseName=Adrenaline_DB";
+		Class.forName("org.postgresql.Driver");
+
+		Connection conn = DriverManager.getConnection(url, psqlUser, psqlPassword);
+
+		String query = "INSERT INTO public.\"user\"(id_user, email, password, id_user_type, user_type) VALUES (?, ?, ?, ?, ?);";
+
+		// possible if ID generates itselfs 
+		//String generatedColumns[] = { "id_user" };
+		
+		PreparedStatement preparedStmt = conn.prepareStatement(query, generatedColumns);
+		
+		preparedStmt.setInt(1, ref_FF_Gew_ID);
+		preparedStmt.setString(2, ansprechpartner_int);
+
+		preparedStmt.setDate(3, sqlDate);
+
+		preparedStmt.setString(4, erfasser);
+		preparedStmt.setString(5, bestellnummer);
+		preparedStmt.setString(6, psp);
+		preparedStmt.setString(7, av_ve);
+		preparedStmt.setString(8, av_ff);
+
+		java.util.Date vonDate = sdf.parse(von);
+		java.sql.Date sqlVon = new Date(vonDate.getTime());
+		preparedStmt.setDate(9, sqlVon);
+
+		java.util.Date bisDate = sdf.parse(bis);
+		java.sql.Date sqlBis = new Date(bisDate.getTime());
+		preparedStmt.setDate(10, sqlBis);
+		preparedStmt.setBoolean(11, besetzt);
+		preparedStmt.setString(12, arbeiten);
+		preparedStmt.setString(13, ort);
+		preparedStmt.setString(14, bemerkungen);
+		preparedStmt.setString(15, kurztitel);
+		preparedStmt.setString(16, kontraktnummer);
+		preparedStmt.setString(17, begeher);
+
+		preparedStmt.executeUpdate();
+
+		ResultSet rs = preparedStmt.getGeneratedKeys();
+		rs.next();
+		int vorgangID = (int) rs.getLong(1);
+
+		System.out.println("...process " + vorgangID + " is registered.");
+		return vorgangID;
+	}
+	
+}
